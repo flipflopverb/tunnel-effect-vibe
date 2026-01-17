@@ -17,6 +17,8 @@ const defaultSliders = {
   backgroundCycling: 0,
 
   autoRotation: 0,
+  textRotationSpeed: 0.2,
+  textAutoRotation: 0,
   textSpawnRate: 0.1,
   textVisibleTime: 5,
   textFadeTime: 3,
@@ -25,7 +27,7 @@ const defaultSliders = {
 
 // Static values
 const staticConfig = {
-  shapeCount: 100, // Static max of 100
+  shapeCount: 200, // Static max of 200
   maxSize: null // Will be calculated as 110% of canvas
 };
 
@@ -35,7 +37,6 @@ export function App() {
   const [customText, setCustomText] = useState('');
   const [mouseFollow, setMouseFollow] = useState(false);
   const [mouseRotationControl, setMouseRotationControl] = useState(false);
-  const [invertTextRotation, setInvertTextRotation] = useState(false);
   const [staticTextColor, setStaticTextColor] = useState(false);
   const [textColor, setTextColor] = useState('#00ff00');
   const [colorPalette, setColorPalette] = useState(['#00ff00', '#ff00ff', '#00ffff', '#ffff00']);
@@ -92,7 +93,7 @@ export function App() {
             />
           </div>
           <div className="flex-1 mt-4 overflow-hidden">
-            <SliderControls sliders={sliders} setSliders={setSliders} mouseFollow={mouseFollow} setMouseFollow={setMouseFollow} mouseRotationControl={mouseRotationControl} setMouseRotationControl={setMouseRotationControl} invertTextRotation={invertTextRotation} setInvertTextRotation={setInvertTextRotation} staticTextColor={staticTextColor} setStaticTextColor={setStaticTextColor} textColor={textColor} setTextColor={setTextColor} colorPalette={colorPalette} setColorPalette={setColorPalette} backgroundPalette={backgroundPalette} setBackgroundPalette={setBackgroundPalette} onReset={handleReset} />
+            <SliderControls sliders={sliders} setSliders={setSliders} mouseFollow={mouseFollow} setMouseFollow={setMouseFollow} mouseRotationControl={mouseRotationControl} setMouseRotationControl={setMouseRotationControl} staticTextColor={staticTextColor} setStaticTextColor={setStaticTextColor} textColor={textColor} setTextColor={setTextColor} colorPalette={colorPalette} setColorPalette={setColorPalette} backgroundPalette={backgroundPalette} setBackgroundPalette={setBackgroundPalette} onReset={handleReset} />
           </div>
         </div>
 
@@ -104,7 +105,6 @@ export function App() {
             customText={customText}
             mouseFollow={mouseFollow}
             mouseRotationControl={mouseRotationControl}
-            invertTextRotation={invertTextRotation}
             staticTextColor={staticTextColor}
             textColor={textColor}
             colorPalette={colorPalette}

@@ -7,32 +7,27 @@ interface SliderControlsProps {
   setMouseFollow: React.Dispatch<React.SetStateAction<boolean>>;
   mouseRotationControl: boolean;
   setMouseRotationControl: React.Dispatch<React.SetStateAction<boolean>>;
-  invertTextRotation: boolean;
-  setInvertTextRotation: React.Dispatch<React.SetStateAction<boolean>>;
-  staticTextColor: boolean;
-  setStaticTextColor: React.Dispatch<React.SetStateAction<boolean>>;
-  textColor: string;
-  setTextColor: React.Dispatch<React.SetStateAction<string>>;
   colorPalette: string[];
   setColorPalette: React.Dispatch<React.SetStateAction<string[]>>;
   backgroundPalette: string[];
   setBackgroundPalette: React.Dispatch<React.SetStateAction<string[]>>;
-  onReset: () => void;
 }
 
-export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSliders, mouseFollow, setMouseFollow, mouseRotationControl, setMouseRotationControl, invertTextRotation, setInvertTextRotation, staticTextColor, setStaticTextColor, textColor, setTextColor, colorPalette, setColorPalette, backgroundPalette, setBackgroundPalette, onReset }) => {
-  const sliderConfigs = [
+export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSliders, mouseFollow, setMouseFollow, mouseRotationControl, setMouseRotationControl, staticTextColor, setStaticTextColor, textColor, setTextColor, colorPalette, setColorPalette, backgroundPalette, setBackgroundPalette, onReset }) => {
+  const sliderConfigs = [ // Updated: rotation sliders at indices 6-9 only
     // Shape Appearance Controls
-    { id: 'animationSpeed', label: 'Animation Speed', min: 0.5, max: 5, value: 2 },
+    { id: 'animationSpeed', label: 'Animation Speed', min: 1, max: 5, value: 2 },
     { id: 'strokeWidth', label: 'Stroke Width', min: 1, max: 10, value: 2 },
     { id: 'shapeTransparency', label: 'Shape Transparency', min: 0, max: 255, value: 255, step: 1 },
     { id: 'colorCycling', label: 'Shape Color Cycle Speed', min: 0, max: 5, value: 2, step: 0.1 },
     { id: 'textVisibleTime', label: 'Text Visible Time (sec)', min: 1, max: 5, value: 5, step: 0.1 },
     { id: 'textFadeTime', label: 'Text Fade Time (sec)', min: 1, max: 3, value: 3, step: 0.1 },
     
-    // Motion & Animation Controls
-    { id: 'rotationSpeed', label: 'Rotation Speed', min: -2, max: 2, value: 0.2, step: 0.01 },
-    { id: 'autoRotation', label: 'Auto Rotation', min: 0, max: 8, value: 0, step: 0.01 },
+    // Rotation Controls
+    { id: 'rotationSpeed', label: 'Shape Rotation Speed', min: -8, max: 8, value: 0.2, step: 0.01 },
+    { id: 'autoRotation', label: 'Shape Auto Rotation', min: 0, max: 8, value: 0, step: 0.01 },
+    { id: 'textRotationSpeed', label: 'Text Rotation Speed', min: -8, max: 8, value: 0.2, step: 0.01 },
+    { id: 'textAutoRotation', label: 'Text Auto Rotation', min: 0, max: 8, value: 0, step: 0.01 },
     
     // Spawning & Origin Controls
     { id: 'spawnRate', label: 'Shape Spawn Rate', min: 0, max: 10, value: 5, step: 0.1 },
@@ -186,23 +181,7 @@ export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSlid
           </label>
         </div>
         
-        {/* Text Color Picker - Only shown when static text color is enabled */}
-        {staticTextColor && (
-          <div className="mb-3 p-2 border border-purple-500 bg-gray-700">
-            <div className="text-purple-100 text-xs mb-2">TEXT COLOR</div>
-            <div className="flex items-center">
-              <input
-                type="color"
-                value={textColor}
-                onChange={(e) => setTextColor(e.target.value)}
-                className="w-8 h-8 border border-purple-400 bg-gray-800 cursor-pointer"
-              />
-              <span className="text-purple-300 text-xs ml-2">{textColor}</span>
-            </div>
-          </div>
-        )}
-        
-        {/* Text Timing Controls - Moved here from general sliders */}
+        {/* Text Timing Controls */}
         {sliderConfigs.slice(4, 6).map((config, index) => (
           <div key={config.id} className="mb-3 p-2 border border-purple-500 bg-gray-700">
             <div className="flex justify-between items-center mb-2">
@@ -231,15 +210,33 @@ export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSlid
             />
           </div>
         ))}
+        
+        {/* Text Color Picker - Only shown when static text color is enabled */}
+        {staticTextColor && (
+          <div className="mb-3 p-2 border border-purple-500 bg-gray-700">
+            <div className="text-purple-100 text-xs mb-2">TEXT COLOR</div>
+            <div className="flex items-center">
+              <input
+                type="color"
+                value={textColor}
+                onChange={(e) => setTextColor(e.target.value)}
+                className="w-8 h-8 border border-purple-400 bg-gray-800 cursor-pointer"
+              />
+              <span className="text-purple-300 text-xs ml-2">{textColor}</span>
+            </div>
+          </div>
+        )}
+        
+
       </div>
        
-      {/* Motion & Animation Controls */}
+      {/* Rotation Controls */}
       <div className="mb-6 p-3 border border-cyan-300 bg-gray-800">
         <div className="text-cyan-200 text-sm font-bold mb-3 text-center">
-          === MOTION.CONTROLS ===
+          === ROTATION.CONTROLS ===
         </div>
         
-        {sliderConfigs.slice(6, 8).map((config, index) => (
+        {sliderConfigs.slice(6, 10).map((config, index) => (
           <div key={config.id} className="mb-3 p-2 border border-cyan-500 bg-gray-700">
             <div className="flex justify-between items-center mb-2">
               <label className="text-cyan-100 text-xs">
@@ -271,18 +268,19 @@ export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSlid
           </div>
         ))}
         
-        {/* Invert Text Rotation Checkbox */}
+        {/* Mouse Rotation Control Checkbox */}
         <div className="mb-3 p-2 border border-cyan-500 bg-gray-700">
           <label className="flex items-center text-cyan-100 text-xs cursor-pointer">
             <input
               type="checkbox"
-              checked={invertTextRotation}
-              onChange={(e) => setInvertTextRotation(e.target.checked)}
+              checked={mouseRotationControl}
+              onChange={(e) => setMouseRotationControl(e.target.checked)}
               className="mr-2 w-4 h-4 text-cyan-400 bg-gray-800 border-cyan-600 rounded focus:ring-cyan-500 focus:ring-2"
             />
-            <span>INVERT TEXT ROTATION</span>
+            <span>MOUSE ROTATION CONTROL</span>
           </label>
         </div>
+
       </div>
        
       {/* Spawning & Origin Controls */}
@@ -291,33 +289,7 @@ export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSlid
           === SPAWNING.ORIGIN.CONTROLS ===
         </div>
         
-        {/* Mouse Follow Checkbox */}
-        <div className="mb-3 p-2 border border-yellow-500 bg-gray-700">
-          <label className="flex items-center text-yellow-100 text-xs cursor-pointer">
-            <input
-              type="checkbox"
-              checked={mouseFollow}
-              onChange={(e) => setMouseFollow(e.target.checked)}
-              className="mr-2 w-4 h-4 text-yellow-400 bg-gray-800 border-yellow-600 rounded focus:ring-yellow-500 focus:ring-2"
-            />
-            <span>ORIGIN FOLLOW MOUSE</span>
-          </label>
-        </div>
-        
-        {/* Mouse Rotation Control Checkbox */}
-        <div className="mb-3 p-2 border border-yellow-500 bg-gray-700">
-          <label className="flex items-center text-yellow-100 text-xs cursor-pointer">
-            <input
-              type="checkbox"
-              checked={mouseRotationControl}
-              onChange={(e) => setMouseRotationControl(e.target.checked)}
-              className="mr-2 w-4 h-4 text-yellow-400 bg-gray-800 border-yellow-600 rounded focus:ring-yellow-500 focus:ring-2"
-            />
-            <span>MOUSE ROTATION CONTROL</span>
-          </label>
-        </div>
-        
-        {sliderConfigs.slice(8, 14).map((config, index) => (
+        {sliderConfigs.slice(10, 16).map((config, index) => (
           <div key={config.id} className="mb-3 p-2 border border-yellow-500 bg-gray-700">
             <div className="flex justify-between items-center mb-2">
               <label className="text-yellow-100 text-xs">
@@ -348,8 +320,22 @@ export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSlid
             />
           </div>
         ))}
+        
+        {/* Mouse Follow Checkbox */}
+        <div className="mt-4 mb-3 p-2 border border-yellow-500 bg-gray-700">
+          <label className="flex items-center text-yellow-100 text-xs cursor-pointer">
+            <input
+              type="checkbox"
+              checked={mouseFollow}
+              onChange={(e) => setMouseFollow(e.target.checked)}
+              className="mr-2 w-4 h-4 text-yellow-400 bg-gray-800 border-yellow-600 rounded focus:ring-yellow-500 focus:ring-2"
+            />
+            <span>ORIGIN FOLLOW MOUSE</span>
+          </label>
+        </div>
       </div>
-      
+       
+ 
       {/* Reset Button */}
       <div className="mt-4 mb-4 p-3 border border-red-600 bg-gray-900">
         <button

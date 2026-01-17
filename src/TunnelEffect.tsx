@@ -7,14 +7,13 @@ interface TunnelEffectProps {
   customText: string;
   mouseFollow: boolean;
   mouseRotationControl: boolean;
-  invertTextRotation: boolean;
   staticTextColor: boolean;
   textColor: string;
   colorPalette: string[];
   backgroundPalette: string[];
 }
 
-export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, customText, mouseFollow, mouseRotationControl, invertTextRotation, staticTextColor, textColor, colorPalette, backgroundPalette }) => {
+export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, customText, mouseFollow, mouseRotationControl, staticTextColor, textColor, colorPalette, backgroundPalette }) => {
   const canvasRef = useRef<HTMLDivElement>(null);
   
   // Store parameters in refs to always have latest values
@@ -23,7 +22,6 @@ export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, 
   const customTextRef = useRef(customText);
   const mouseFollowRef = useRef(mouseFollow);
   const mouseRotationControlRef = useRef(mouseRotationControl);
-  const invertTextRotationRef = useRef(invertTextRotation);
   const staticTextColorRef = useRef(staticTextColor);
   const textColorRef = useRef(textColor);
   const colorPaletteRef = useRef(colorPalette);
@@ -36,12 +34,11 @@ export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, 
     customTextRef.current = customText;
     mouseFollowRef.current = mouseFollow;
     mouseRotationControlRef.current = mouseRotationControl;
-    invertTextRotationRef.current = invertTextRotation;
     staticTextColorRef.current = staticTextColor;
     textColorRef.current = textColor;
     colorPaletteRef.current = colorPalette;
     backgroundPaletteRef.current = backgroundPalette;
-  }, [sliders, shapeType, customText, mouseFollow, mouseRotationControl, invertTextRotation, staticTextColor, textColor, colorPalette, backgroundPalette]);
+  }, [sliders, shapeType, customText, mouseFollow, mouseRotationControl, staticTextColor, textColor, colorPalette, backgroundPalette]);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -312,8 +309,21 @@ export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, 
             adjustedRotationSpeed = drawSliders.rotationSpeed + rotationSpeedDiff * 0.6; // Extreme blending
           }
           
-          // Invert rotation for text if enabled
-          const rotationSpeed = shape.isText && invertTextRotationRef.current ? -adjustedRotationSpeed : adjustedRotationSpeed;
+          // Use separate rotation logic for text and shapes
+          let rotationSpeed;
+          if (shape.isText) {
+            // Text rotation logic
+            if (drawSliders.textAutoRotation > 0) {
+              const targetRotationSpeed = Math.sin(p.frameCount * 0.01) * drawSliders.textAutoRotation;
+              const rotationSpeedDiff = targetRotationSpeed - drawSliders.textRotationSpeed;
+              rotationSpeed = drawSliders.textRotationSpeed + rotationSpeedDiff * 0.6;
+            } else {
+              rotationSpeed = drawSliders.textRotationSpeed;
+            }
+          } else {
+            // Shape rotation logic
+            rotationSpeed = adjustedRotationSpeed;
+          }
           shape.rotation += rotationSpeed * 0.01;
           
           // Moderate recentering - shapes gradually move toward center

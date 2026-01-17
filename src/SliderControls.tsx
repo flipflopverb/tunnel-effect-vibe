@@ -17,14 +17,18 @@ interface SliderControlsProps {
   setColorPalette: React.Dispatch<React.SetStateAction<string[]>>;
   backgroundPalette: string[];
   setBackgroundPalette: React.Dispatch<React.SetStateAction<string[]>>;
+  onReset: () => void;
 }
 
-export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSliders, mouseFollow, setMouseFollow, mouseRotationControl, setMouseRotationControl, invertTextRotation, setInvertTextRotation, staticTextColor, setStaticTextColor, textColor, setTextColor, colorPalette, setColorPalette, backgroundPalette, setBackgroundPalette }) => {
+export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSliders, mouseFollow, setMouseFollow, mouseRotationControl, setMouseRotationControl, invertTextRotation, setInvertTextRotation, staticTextColor, setStaticTextColor, textColor, setTextColor, colorPalette, setColorPalette, backgroundPalette, setBackgroundPalette, onReset }) => {
   const sliderConfigs = [
     // Shape Appearance Controls
     { id: 'animationSpeed', label: 'Animation Speed', min: 0.5, max: 5, value: 2 },
     { id: 'strokeWidth', label: 'Stroke Width', min: 1, max: 10, value: 2 },
+    { id: 'shapeTransparency', label: 'Shape Transparency', min: 0, max: 255, value: 255, step: 1 },
     { id: 'colorCycling', label: 'Shape Color Cycle Speed', min: 0, max: 5, value: 2, step: 0.1 },
+    { id: 'textVisibleTime', label: 'Text Visible Time (sec)', min: 1, max: 5, value: 5, step: 0.1 },
+    { id: 'textFadeTime', label: 'Text Fade Time (sec)', min: 1, max: 3, value: 3, step: 0.1 },
     
     // Motion & Animation Controls
     { id: 'rotationSpeed', label: 'Rotation Speed', min: -2, max: 2, value: 0.2, step: 0.01 },
@@ -70,7 +74,7 @@ export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSlid
           === SHAPE.APPEARANCE ===
         </div>
         
-        {sliderConfigs.slice(0, 3).map((config, index) => (
+        {sliderConfigs.slice(0, 4).map((config, index) => (
           <div key={config.id} className="mb-3 p-2 border border-purple-500 bg-gray-700">
             <div className="flex justify-between items-center mb-2">
               <label className="text-purple-100 text-xs">
@@ -197,6 +201,36 @@ export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSlid
             </div>
           </div>
         )}
+        
+        {/* Text Timing Controls - Moved here from general sliders */}
+        {sliderConfigs.slice(4, 6).map((config, index) => (
+          <div key={config.id} className="mb-3 p-2 border border-purple-500 bg-gray-700">
+            <div className="flex justify-between items-center mb-2">
+              <label className="text-purple-100 text-xs">
+                {config.label.toUpperCase()}
+              </label>
+              <span className="text-white text-xs font-bold">
+                {sliders[config.id] !== undefined ? sliders[config.id].toFixed(2) : config.value.toFixed(2)}
+              </span>
+            </div>
+            <input
+              type="range"
+              min={config.min}
+              max={config.max}
+              step={config.step || 0.01}
+              value={sliders[config.id] !== undefined ? sliders[config.id] : config.value}
+              onChange={(e) => handleSliderChange(config.id, parseFloat(e.target.value))}
+              className="w-full h-2 bg-gray-700 appearance-none cursor-pointer slider-terminal"
+              style={{
+                background: (() => {
+                  const currentValue = sliders[config.id] !== undefined ? sliders[config.id] : config.value;
+                  const percentage = ((currentValue - config.min) / (config.max - config.min)) * 100;
+                  return `linear-gradient(to right, #ffffff 0%, #ffffff ${percentage}%, #1a1a1a ${percentage}%, #1a1a1a 100%)`;
+                })()
+              }}
+            />
+          </div>
+        ))}
       </div>
        
       {/* Motion & Animation Controls */}
@@ -205,7 +239,7 @@ export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSlid
           === MOTION.CONTROLS ===
         </div>
         
-        {sliderConfigs.slice(3, 5).map((config, index) => (
+        {sliderConfigs.slice(6, 8).map((config, index) => (
           <div key={config.id} className="mb-3 p-2 border border-cyan-500 bg-gray-700">
             <div className="flex justify-between items-center mb-2">
               <label className="text-cyan-100 text-xs">
@@ -283,7 +317,7 @@ export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSlid
           </label>
         </div>
         
-        {sliderConfigs.slice(5, 11).map((config, index) => (
+        {sliderConfigs.slice(8, 14).map((config, index) => (
           <div key={config.id} className="mb-3 p-2 border border-yellow-500 bg-gray-700">
             <div className="flex justify-between items-center mb-2">
               <label className="text-yellow-100 text-xs">
@@ -316,8 +350,21 @@ export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSlid
         ))}
       </div>
       
+      {/* Reset Button */}
+      <div className="mt-4 mb-4 p-3 border border-red-600 bg-gray-900">
+        <button
+          onClick={onReset}
+          className="w-full py-2 px-4 bg-red-900 text-red-300 font-bold text-xs border border-red-500 hover:bg-red-800 hover:text-red-200 transition-colors duration-200 cursor-pointer"
+        >
+          [ RESET ALL TO DEFAULTS ]
+        </button>
+        <div className="text-red-500 text-xs mt-2 text-center">
+          &gt; CLEARS TEXT + RESTORES DEFAULT SETTINGS
+        </div>
+      </div>
+
       {/* System Status */}
-      <div className="mt-6 p-2 border border-purple-600 bg-gray-900">
+      <div className="p-2 border border-purple-600 bg-gray-900">
         <div className="text-purple-400 text-xs mb-2">SYSTEM STATUS</div>
         <div className="text-purple-500 text-xs">[ONLINE] TUNNEL.ENGAGED</div>
         <div className="text-purple-500 text-xs">[ACTIVE] PARAMETERS.LOADED</div>

@@ -17,7 +17,10 @@ const defaultSliders = {
   backgroundCycling: 0,
 
   autoRotation: 0,
-  textSpawnRate: 0.1
+  textSpawnRate: 0.1,
+  textVisibleTime: 5,
+  textFadeTime: 3,
+  shapeTransparency: 255
 };
 
 // Static values
@@ -38,6 +41,20 @@ export function App() {
   const [colorPalette, setColorPalette] = useState(['#00ff00', '#ff00ff', '#00ffff', '#ffff00']);
   const [backgroundPalette, setBackgroundPalette] = useState(['#000000', '#4a0066', '#661144', '#114444']);
 
+  // Reset function to restore all defaults
+  const handleReset = () => {
+    setSliders(defaultSliders);
+    setShapeType('square');
+    setCustomText('');
+    setMouseFollow(false);
+    setMouseRotationControl(false);
+    setInvertTextRotation(false);
+    setStaticTextColor(false);
+    setTextColor('#00ff00');
+    setColorPalette(['#00ff00', '#ff00ff', '#00ffff', '#ffff00']);
+    setBackgroundPalette(['#000000', '#4a0066', '#661144', '#114444']);
+  };
+
   return (
     <div className="min-h-screen bg-black text-green-500 terminal-pixel overflow-hidden">
       {/* Header */}
@@ -46,8 +63,18 @@ export function App() {
           <h1 className="text-2xl font-bold text-green-400 mb-2">
             &gt; TUNNEL_EFFECT.SIMULATOR [v1.0]
           </h1>
-          <div className="text-xs text-green-600">
+          <div className="text-xs text-green-600 mb-2">
             CYBERPUNK TERMINAL INTERFACE | STATUS: ONLINE
+          </div>
+          <div className="text-xs text-green-500 font-mono">
+            &gt; CURRENT.GEOMETRY: {(() => {
+              const shapes = [
+                { type: 'triangle', label: 'TRIANGLE' },
+                { type: 'square', label: 'SQUARE' },
+                { type: 'circle', label: 'CIRCLE' }
+              ];
+              return shapes.find(s => s.type === shapeType)?.label.toUpperCase() + '.ENGAGED';
+            })()}
           </div>
         </div>
       </div>
@@ -56,14 +83,16 @@ export function App() {
       <div className="flex" style={{ height: 'calc(100vh - 120px)' }}>
         {/* Left Panel - Controls */}
         <div className="w-80 flex flex-col h-full">
-          <ShapeSelector 
-            shapeType={shapeType} 
-            setShapeType={setShapeType} 
-            customText={customText}
-            setCustomText={setCustomText}
-          />
+          <div className="h-96 overflow-hidden">
+            <ShapeSelector 
+              shapeType={shapeType} 
+              setShapeType={setShapeType} 
+              customText={customText}
+              setCustomText={setCustomText}
+            />
+          </div>
           <div className="flex-1 mt-4 overflow-hidden">
-            <SliderControls sliders={sliders} setSliders={setSliders} mouseFollow={mouseFollow} setMouseFollow={setMouseFollow} mouseRotationControl={mouseRotationControl} setMouseRotationControl={setMouseRotationControl} invertTextRotation={invertTextRotation} setInvertTextRotation={setInvertTextRotation} staticTextColor={staticTextColor} setStaticTextColor={setStaticTextColor} textColor={textColor} setTextColor={setTextColor} colorPalette={colorPalette} setColorPalette={setColorPalette} backgroundPalette={backgroundPalette} setBackgroundPalette={setBackgroundPalette} />
+            <SliderControls sliders={sliders} setSliders={setSliders} mouseFollow={mouseFollow} setMouseFollow={setMouseFollow} mouseRotationControl={mouseRotationControl} setMouseRotationControl={setMouseRotationControl} invertTextRotation={invertTextRotation} setInvertTextRotation={setInvertTextRotation} staticTextColor={staticTextColor} setStaticTextColor={setStaticTextColor} textColor={textColor} setTextColor={setTextColor} colorPalette={colorPalette} setColorPalette={setColorPalette} backgroundPalette={backgroundPalette} setBackgroundPalette={setBackgroundPalette} onReset={handleReset} />
           </div>
         </div>
 

@@ -52,6 +52,8 @@ export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, 
       let lastTextSpawnTime = 0;
       let globalColorIndex = 0; // Track which color to use for new spawns
       let backgroundCycleTime = 0; // Track background color cycling
+      let currentWordIndex = 0;
+      let textWords: string[] = [];
       
       // Helper function to interpolate between colors smoothly
       const interpolateColor = (colorOffset: number, palette: string[], time: number, cycleSpeed: number) => {
@@ -150,7 +152,14 @@ export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, 
         const drawSliders = slidersRef.current;
         const drawCustomText = customTextRef.current;
         
-        if (!drawCustomText.trim()) return; // Don't spawn if text is empty
+        // Update words array when text changes
+        const newWords = drawCustomText.trim().split(/\s+/).filter(word => word.length > 0);
+        if (JSON.stringify(newWords) !== JSON.stringify(textWords)) {
+          textWords = newWords;
+          currentWordIndex = 0; // Reset when text changes
+        }
+        
+        if (textWords.length === 0) return; // Don't spawn if no words
         
         const canvasDiagonal = Math.sqrt(p.width * p.width + p.height * p.height);
         const canvasSize = Math.max(p.width, p.height);
@@ -194,9 +203,12 @@ export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, 
           maxSize: actualMaxSize,
           spawnTime: p.millis(),
           colorOffset: globalColorIndex, // Use current global color offset
-          text: drawCustomText,
+          text: textWords[currentWordIndex],
           isText: true
         });
+        
+        // Move to next word, loop back to start if at end
+        currentWordIndex = (currentWordIndex + 1) % textWords.length;
       };
 
       p.draw = () => {
@@ -290,8 +302,10 @@ export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, 
           // Delete shape if it gets too big, but allow text to stay long enough to fade
           if (shape.isText && shape.text) {
             const age = p.millis() - shape.spawnTime;
-            // Keep text for at least 8 seconds (5 seconds + 3 second fade)
-            return shape.size <= shape.maxSize && age <= 8000;
+            const visibleTimeMs = drawSliders.textVisibleTime * 1000;
+            const fadeTimeMs = drawSliders.textFadeTime * 1000;
+            const totalTextTime = visibleTimeMs + fadeTimeMs; // Keep text for visible + fade time
+            return shape.size <= shape.maxSize && age <= totalTextTime;
           }
           return shape.size <= shape.maxSize;
         });
@@ -310,13 +324,22 @@ export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, 
         
         // Draw remaining shapes
         tunnel.forEach((shape, index) => {
-          // Calculate fade for text after 5 seconds
+          // Calculate fade for text using slider values
           let alpha = 255;
           if (shape.isText && shape.text) {
             const age = p.millis() - shape.spawnTime;
-            if (age > 5000) {
-              alpha = Math.max(0, 255 - ((age - 5000) / 3000) * 255); // Fade over 3 seconds after 5 seconds
+            const visibleTimeMs = drawSliders.textVisibleTime * 1000; // Convert seconds to milliseconds
+            const fadeTimeMs = drawSliders.textFadeTime * 1000; // Convert seconds to milliseconds
+            
+            if (age > visibleTimeMs) {
+              alpha = Math.max(0, 255 - ((age - visibleTimeMs) / fadeTimeMs) * 255);
             }
+          }
+          
+          // Apply shape transparency (not for text)
+          let shapeAlpha = alpha;
+          if (!shape.isText) {
+            shapeAlpha = Math.min(alpha, drawSliders.shapeTransparency);
           }
           
           // Smooth color interpolation (static for text if checkbox is checked)
@@ -327,7 +350,7 @@ export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, 
           } else {
             color = interpolateColor(shape.colorOffset, colorPaletteRef.current, shape.spawnTime, drawSliders.colorCycling);
           }
-          p.stroke(p.red(color), p.green(color), p.blue(color), alpha);
+          p.stroke(p.red(color), p.green(color), p.blue(color), shapeAlpha);
           p.strokeWeight(drawSliders.strokeWidth);
           
           p.noFill();

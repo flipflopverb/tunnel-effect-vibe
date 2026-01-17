@@ -16,7 +16,7 @@ export const ShapeSelector: React.FC<ShapeSelectorProps> = ({ shapeType, setShap
 
   return (
     <div className="bg-black border-2 border-green-500 p-4 font-mono text-sm terminal-pixel">
-      <h3 className="text-green-500 text-lg font-bold mb-4 text-center">
+      <h3 className="text-green-500 text-lg font-bold mb-3 text-center">
         [ SHAPE.SELECTOR ]
       </h3>
       
@@ -41,25 +41,18 @@ export const ShapeSelector: React.FC<ShapeSelectorProps> = ({ shapeType, setShap
       </div>
       
       {/* Custom Text Input */}
-      <div className="mt-4 p-3 border border-green-600 bg-gray-800">
-        <div className="text-green-400 text-xs mb-2">CUSTOM TEXT SPAWNER</div>
-        <input
-          type="text"
+      <div className="mt-2 p-2 border border-green-600 bg-gray-800">
+        <div className="text-green-400 text-xs mb-1">CUSTOM TEXT SPAWNER</div>
+        <textarea
           value={customText}
-          onChange={(e) => setCustomText(e.target.value.slice(0, 16))}
-          placeholder="Enter text (16 chars max)"
-          maxLength={16}
-          className="w-full px-2 py-1 bg-gray-900 border border-green-700 text-green-400 text-xs font-mono focus:outline-none focus:border-green-500"
+          onChange={(e) => setCustomText(e.target.value.slice(0, 2000))}
+          placeholder="Enter text (2000 chars max)"
+          maxLength={2000}
+          rows={5}
+          className="w-full px-2 py-1 bg-gray-900 border border-green-700 text-green-400 text-xs font-mono focus:outline-none focus:border-green-500 resize-none"
         />
         <div className="text-green-600 text-xs mt-1">
-          [{customText.length}/16] - Adjustable spawn rate
-        </div>
-      </div>
-      
-      <div className="mt-4 p-2 border border-green-900 bg-gray-900">
-        <div className="text-green-400 text-xs mb-2">CURRENT GEOMETRY</div>
-        <div className="text-green-500 text-xs font-bold">
-          &gt; {shapes.find(s => s.type === shapeType)?.label.toUpperCase()}.ENGAGED
+          [{customText.length}/2000] - Splits by space, spawns one word at a time
         </div>
       </div>
     </div>

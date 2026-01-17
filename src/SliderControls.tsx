@@ -22,7 +22,6 @@ export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSlid
     { id: 'colorCycling', label: 'Shape Color Cycle Speed', min: 0, max: 5, value: 2, step: 0.1 },
     { id: 'textVisibleTime', label: 'Text Visible Time (sec)', min: 1, max: 5, value: 5, step: 0.1 },
     { id: 'textFadeTime', label: 'Text Fade Time (sec)', min: 1, max: 3, value: 3, step: 0.1 },
-    { id: 'textDelayTime', label: 'Text Delay After Last (sec)', min: 0, max: 60, value: 20, step: 1 },
     
     // Rotation Controls
     { id: 'rotationSpeed', label: 'Shape Rotation Speed', min: -8, max: 8, value: 0.2, step: 0.01 },
@@ -33,6 +32,7 @@ export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSlid
     // Spawning & Origin Controls
     { id: 'spawnRate', label: 'Shape Spawn Rate', min: 0, max: 10, value: 5, step: 0.1 },
     { id: 'textSpawnRate', label: 'Text Spawn Rate', min: 0, max: 2, value: 0.1, step: 0.01 },
+    { id: 'textDelayTime', label: 'Text Delay After Last (sec)', min: 0, max: 60, value: 20, step: 1 },
     { id: 'originX', label: 'Origin X', min: 0, max: 100, value: 50 },
     { id: 'originY', label: 'Origin Y', min: 0, max: 100, value: 50 },
     { id: 'originXAutomation', label: 'Origin X Auto', min: 0, max: 2, value: 0.5, step: 0.01 },
@@ -290,7 +290,7 @@ export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSlid
           === SPAWNING.ORIGIN.CONTROLS ===
         </div>
         
-        {sliderConfigs.slice(10, 16).map((config, index) => (
+        {sliderConfigs.slice(10, 17).map((config, index) => (
           <div key={config.id} className="mb-3 p-2 border border-yellow-500 bg-gray-700">
             <div className="flex justify-between items-center mb-2">
               <label className="text-yellow-100 text-xs">

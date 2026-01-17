@@ -1,0 +1,267 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --terminal-green: #00ff92;
+    --terminal-dark: #05080c;
+    --terminal-dim: #004d29;
+    --terminal-bright: #33ffb3;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply m-0 p-0 overflow-hidden;
+    font-family: 'Courier New', monospace;
+    background: var(--terminal-dark);
+    color: var(--terminal-green);
+    text-shadow: 0 0 5px rgba(0, 255, 146, 0.5);
+  }
+
+  /* Terminal scanline effect */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    background: linear-gradient(
+      transparent 50%,
+      rgba(0, 255, 146, 0.03) 50%
+    );
+    background-size: 100% 4px;
+    animation: scanline 8s linear infinite;
+  }
+
+  /* CRT screen curvature effect */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    pointer-events: none;
+    box-shadow: 
+      inset 0 0 120px rgba(0, 255, 146, 0.1),
+      inset 0 0 40px rgba(0, 255, 146, 0.05);
+    border-radius: 10px;
+  }
+}
+
+/* Custom slider styling for terminal theme */
+.slider-terminal {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: var(--terminal-dark);
+  outline: none;
+  border: 1px solid var(--terminal-dim);
+}
+
+.slider-terminal::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: var(--terminal-green);
+  cursor: pointer;
+  border: 1px solid var(--terminal-bright);
+  box-shadow: 0 0 10px rgba(0, 255, 146, 0.8);
+}
+
+.slider-terminal::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: var(--terminal-green);
+  cursor: pointer;
+  border: 1px solid var(--terminal-bright);
+  box-shadow: 0 0 10px rgba(0, 255, 146, 0.8);
+}
+
+/* ASCII matrix rain effect in background */
+.matrix-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.1;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 146, 0.03) 2px,
+    rgba(0, 255, 146, 0.03) 4px
+  );
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(10px);
+  }
+}
+
+@keyframes flicker {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-1px, 1px);
+  }
+  40% {
+    transform: translate(-1px, -1px);
+  }
+  60% {
+    transform: translate(1px, 1px);
+  }
+  80% {
+    transform: translate(1px, -1px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+/* Enhanced retro terminal fonts */
+@font-face {
+  font-family: 'RetroTerminal';
+  src: local('Courier New'), local('Courier'), local('Monaco'), local('Consolas'), local('monospace');
+  font-display: swap;
+  font-weight: bold;
+  image-rendering: pixelated;
+  -webkit-font-smoothing: none;
+  font-smooth: none;
+  image-rendering: -moz-crisp-edges;
+  text-rendering: geometricPrecision;
+  /* Character spacing for retro look */
+  letter-spacing: 0.1em;
+  line-height: 1.1;
+}
+
+.terminal-pixel {
+  font-family: 'RetroTerminal', 'Courier New', 'Monaco', 'Consolas', monospace;
+  font-weight: bold;
+  font-smooth: none;
+  -webkit-font-smoothing: none;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  text-rendering: geometricPrecision;
+  /* Enhanced retro styling */
+  letter-spacing: 0.15em;
+  line-height: 1.2;
+  text-shadow: 0 0 3px rgba(0, 255, 146, 0.8);
+  color: #00ff92;
+  text-transform: uppercase;
+  /* Scanline effect */
+  position: relative;
+}
+
+.terminal-pixel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    transparent 50%,
+    rgba(0, 255, 146, 0.05) 50%,
+    rgba(0, 255, 146, 0.03) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.terminal-pixel {
+  font-family: 'Terminal', 'Courier New', monospace;
+  font-smooth: none;
+  -webkit-font-smoothing: none;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  text-rendering: geometricPrecision;
+}
+  20% {
+    transform: translate(-1px, 1px);
+  }
+  40% {
+    transform: translate(-1px, -1px);
+  }
+  60% {
+    transform: translate(1px, 1px);
+  }
+  80% {
+    transform: translate(1px, -1px);
+  }
+}
+
+/* Glitch text effect */
+.glitch-text {
+  animation: glitch 3s infinite;
+}
+
+/* Terminal button effects */
+.terminal-btn {
+  transition: all 0.2s ease;
+  text-shadow: 0 0 3px currentColor;
+}
+
+.terminal-btn:hover {
+  text-shadow: 0 0 8px currentColor;
+  transform: translateY(-1px);
+}
+
+.terminal-btn:active {
+  transform: translateY(0);
+  text-shadow: 0 0 2px currentColor;
+}
+
+/* Scrollbar styling for terminal theme */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--terminal-dark);
+  border-left: 1px solid var(--terminal-dim);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--terminal-green);
+  border: 1px solid var(--terminal-bright);
+  box-shadow: 0 0 3px rgba(0, 255, 146, 0.5);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--terminal-bright);
+  box-shadow: 0 0 6px rgba(0, 255, 146, 0.8);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--terminal-green) var(--terminal-dark);
+}
+
+@media (prefers-reduced-motion) {
+  *,
+  ::before,
+  ::after {
+    animation: none !important;
+  }
+}

@@ -268,7 +268,8 @@ export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, 
           let canSpawn = true;
           if (isWaitingForDelay && textWords.length > 1) {
             const delayElapsed = p.millis() - lastWordSpawnTime;
-            if (delayElapsed < 20000) { // 20 second delay
+            const delayTimeMs = drawSliders.textDelayTime * 1000; // Convert seconds to milliseconds
+            if (delayElapsed < delayTimeMs) {
               canSpawn = false;
             } else {
               // Delay is over, reset the waiting flag

@@ -22,6 +22,7 @@ const defaultSliders = {
   textSpawnRate: 0.1,
   textVisibleTime: 5,
   textFadeTime: 3,
+  textDelayTime: 20,
   shapeTransparency: 255
 };
 

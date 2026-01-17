@@ -22,6 +22,7 @@ export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSlid
     { id: 'colorCycling', label: 'Shape Color Cycle Speed', min: 0, max: 5, value: 2, step: 0.1 },
     { id: 'textVisibleTime', label: 'Text Visible Time (sec)', min: 1, max: 5, value: 5, step: 0.1 },
     { id: 'textFadeTime', label: 'Text Fade Time (sec)', min: 1, max: 3, value: 3, step: 0.1 },
+    { id: 'textDelayTime', label: 'Text Delay After Last (sec)', min: 0, max: 60, value: 20, step: 1 },
     
     // Rotation Controls
     { id: 'rotationSpeed', label: 'Shape Rotation Speed', min: -8, max: 8, value: 0.2, step: 0.01 },

@@ -54,6 +54,8 @@ export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, 
       let backgroundCycleTime = 0; // Track background color cycling
       let currentWordIndex = 0;
       let textWords: string[] = [];
+      let lastWordSpawnTime = 0; // Track when the last word in sequence was spawned
+      let isWaitingForDelay = false; // Flag to indicate we're in the delay period
       
       // Helper function to interpolate between colors smoothly
       const interpolateColor = (colorOffset: number, palette: string[], time: number, cycleSpeed: number) => {
@@ -207,8 +209,17 @@ export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, 
           isText: true
         });
         
+        // Check if this was the last word in the sequence
+        const wasLastWord = currentWordIndex === textWords.length - 1;
+        
         // Move to next word, loop back to start if at end
         currentWordIndex = (currentWordIndex + 1) % textWords.length;
+        
+        // If this was the last word, start the delay period
+        if (wasLastWord && textWords.length > 1) {
+          lastWordSpawnTime = p.millis();
+          isWaitingForDelay = true;
+        }
       };
 
       p.draw = () => {
@@ -255,7 +266,20 @@ export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, 
         // Spawn custom text at adjustable rate
         if (drawCustomText.trim() && drawSliders.textSpawnRate > 0) {
           const textSpawnInterval = 1000 / drawSliders.textSpawnRate; // Convert rate to milliseconds
-          if (tunnel.length < 200 && p.millis() - lastTextSpawnTime > textSpawnInterval) {
+          
+          // Check if we're waiting for the delay after last word
+          let canSpawn = true;
+          if (isWaitingForDelay && textWords.length > 1) {
+            const delayElapsed = p.millis() - lastWordSpawnTime;
+            if (delayElapsed < 20000) { // 20 second delay
+              canSpawn = false;
+            } else {
+              // Delay is over, reset the waiting flag
+              isWaitingForDelay = false;
+            }
+          }
+          
+          if (tunnel.length < 200 && p.millis() - lastTextSpawnTime > textSpawnInterval && canSpawn) {
             console.log('Spawning text:', drawCustomText, 'Rate:', drawSliders.textSpawnRate);
             const mouseFollowEnabled = mouseFollowRef.current;
             if (mouseFollowEnabled) {

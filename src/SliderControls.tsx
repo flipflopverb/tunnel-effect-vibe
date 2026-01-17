@@ -9,13 +9,17 @@ interface SliderControlsProps {
   setMouseRotationControl: React.Dispatch<React.SetStateAction<boolean>>;
   invertTextRotation: boolean;
   setInvertTextRotation: React.Dispatch<React.SetStateAction<boolean>>;
+  staticTextColor: boolean;
+  setStaticTextColor: React.Dispatch<React.SetStateAction<boolean>>;
+  textColor: string;
+  setTextColor: React.Dispatch<React.SetStateAction<string>>;
   colorPalette: string[];
   setColorPalette: React.Dispatch<React.SetStateAction<string[]>>;
   backgroundPalette: string[];
   setBackgroundPalette: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSliders, mouseFollow, setMouseFollow, mouseRotationControl, setMouseRotationControl, invertTextRotation, setInvertTextRotation, colorPalette, setColorPalette, backgroundPalette, setBackgroundPalette }) => {
+export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSliders, mouseFollow, setMouseFollow, mouseRotationControl, setMouseRotationControl, invertTextRotation, setInvertTextRotation, staticTextColor, setStaticTextColor, textColor, setTextColor, colorPalette, setColorPalette, backgroundPalette, setBackgroundPalette }) => {
   const sliderConfigs = [
     // Shape Appearance Controls
     { id: 'animationSpeed', label: 'Animation Speed', min: 0.5, max: 5, value: 2 },
@@ -28,7 +32,7 @@ export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSlid
     
     // Spawning & Origin Controls
     { id: 'spawnRate', label: 'Shape Spawn Rate', min: 0, max: 10, value: 5, step: 0.1 },
-    { id: 'textSpawnRate', label: 'Text Spawn Rate', min: 0, max: 5, value: 0.1, step: 0.01 },
+    { id: 'textSpawnRate', label: 'Text Spawn Rate', min: 0, max: 2, value: 0.1, step: 0.01 },
     { id: 'originX', label: 'Origin X', min: 0, max: 100, value: 50 },
     { id: 'originY', label: 'Origin Y', min: 0, max: 100, value: 50 },
     { id: 'originXAutomation', label: 'Origin X Auto', min: 0, max: 2, value: 0.5, step: 0.01 },
@@ -164,6 +168,35 @@ export const SliderControls: React.FC<SliderControlsProps> = ({ sliders, setSlid
             ))}
           </div>
         </div>
+        
+        {/* Static Text Color Checkbox */}
+        <div className="mb-3 p-2 border border-purple-500 bg-gray-700">
+          <label className="flex items-center text-purple-100 text-xs cursor-pointer">
+            <input
+              type="checkbox"
+              checked={staticTextColor}
+              onChange={(e) => setStaticTextColor(e.target.checked)}
+              className="mr-2 w-4 h-4 text-purple-400 bg-gray-800 border-purple-600 rounded focus:ring-purple-500 focus:ring-2"
+            />
+            <span>STATIC TEXT COLOR</span>
+          </label>
+        </div>
+        
+        {/* Text Color Picker - Only shown when static text color is enabled */}
+        {staticTextColor && (
+          <div className="mb-3 p-2 border border-purple-500 bg-gray-700">
+            <div className="text-purple-100 text-xs mb-2">TEXT COLOR</div>
+            <div className="flex items-center">
+              <input
+                type="color"
+                value={textColor}
+                onChange={(e) => setTextColor(e.target.value)}
+                className="w-8 h-8 border border-purple-400 bg-gray-800 cursor-pointer"
+              />
+              <span className="text-purple-300 text-xs ml-2">{textColor}</span>
+            </div>
+          </div>
+        )}
       </div>
        
       {/* Motion & Animation Controls */}

@@ -33,8 +33,10 @@ export function App() {
   const [mouseFollow, setMouseFollow] = useState(false);
   const [mouseRotationControl, setMouseRotationControl] = useState(false);
   const [invertTextRotation, setInvertTextRotation] = useState(false);
+  const [staticTextColor, setStaticTextColor] = useState(false);
+  const [textColor, setTextColor] = useState('#00ff00');
   const [colorPalette, setColorPalette] = useState(['#00ff00', '#ff00ff', '#00ffff', '#ffff00']);
-  const [backgroundPalette, setBackgroundPalette] = useState(['#000055', '#1a0033', '#330011', '#002211']);
+  const [backgroundPalette, setBackgroundPalette] = useState(['#000000', '#4a0066', '#661144', '#114444']);
 
   return (
     <div className="min-h-screen bg-black text-green-500 terminal-pixel overflow-hidden">
@@ -61,7 +63,7 @@ export function App() {
             setCustomText={setCustomText}
           />
           <div className="flex-1 mt-4 overflow-hidden">
-            <SliderControls sliders={sliders} setSliders={setSliders} mouseFollow={mouseFollow} setMouseFollow={setMouseFollow} mouseRotationControl={mouseRotationControl} setMouseRotationControl={setMouseRotationControl} invertTextRotation={invertTextRotation} setInvertTextRotation={setInvertTextRotation} colorPalette={colorPalette} setColorPalette={setColorPalette} backgroundPalette={backgroundPalette} setBackgroundPalette={setBackgroundPalette} />
+            <SliderControls sliders={sliders} setSliders={setSliders} mouseFollow={mouseFollow} setMouseFollow={setMouseFollow} mouseRotationControl={mouseRotationControl} setMouseRotationControl={setMouseRotationControl} invertTextRotation={invertTextRotation} setInvertTextRotation={setInvertTextRotation} staticTextColor={staticTextColor} setStaticTextColor={setStaticTextColor} textColor={textColor} setTextColor={setTextColor} colorPalette={colorPalette} setColorPalette={setColorPalette} backgroundPalette={backgroundPalette} setBackgroundPalette={setBackgroundPalette} />
           </div>
         </div>
 
@@ -74,6 +76,8 @@ export function App() {
             mouseFollow={mouseFollow}
             mouseRotationControl={mouseRotationControl}
             invertTextRotation={invertTextRotation}
+            staticTextColor={staticTextColor}
+            textColor={textColor}
             colorPalette={colorPalette}
             backgroundPalette={backgroundPalette}
           />

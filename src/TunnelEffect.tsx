@@ -8,11 +8,13 @@ interface TunnelEffectProps {
   mouseFollow: boolean;
   mouseRotationControl: boolean;
   invertTextRotation: boolean;
+  staticTextColor: boolean;
+  textColor: string;
   colorPalette: string[];
   backgroundPalette: string[];
 }
 
-export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, customText, mouseFollow, mouseRotationControl, invertTextRotation, colorPalette, backgroundPalette }) => {
+export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, customText, mouseFollow, mouseRotationControl, invertTextRotation, staticTextColor, textColor, colorPalette, backgroundPalette }) => {
   const canvasRef = useRef<HTMLDivElement>(null);
   
   // Store parameters in refs to always have latest values
@@ -22,6 +24,8 @@ export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, 
   const mouseFollowRef = useRef(mouseFollow);
   const mouseRotationControlRef = useRef(mouseRotationControl);
   const invertTextRotationRef = useRef(invertTextRotation);
+  const staticTextColorRef = useRef(staticTextColor);
+  const textColorRef = useRef(textColor);
   const colorPaletteRef = useRef(colorPalette);
   const backgroundPaletteRef = useRef(backgroundPalette);
   
@@ -33,9 +37,11 @@ export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, 
     mouseFollowRef.current = mouseFollow;
     mouseRotationControlRef.current = mouseRotationControl;
     invertTextRotationRef.current = invertTextRotation;
+    staticTextColorRef.current = staticTextColor;
+    textColorRef.current = textColor;
     colorPaletteRef.current = colorPalette;
     backgroundPaletteRef.current = backgroundPalette;
-  }, [sliders, shapeType, customText, mouseFollow, mouseRotationControl, invertTextRotation, colorPalette, backgroundPalette]);
+  }, [sliders, shapeType, customText, mouseFollow, mouseRotationControl, invertTextRotation, staticTextColor, textColor, colorPalette, backgroundPalette]);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -281,7 +287,12 @@ export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, 
           shape.x = shape.x + (centerX - shape.x) * moderateCentering;
           shape.y = shape.y + (centerY - shape.y) * moderateCentering;
           
-          // Delete shape if it gets too big
+          // Delete shape if it gets too big, but allow text to stay long enough to fade
+          if (shape.isText && shape.text) {
+            const age = p.millis() - shape.spawnTime;
+            // Keep text for at least 8 seconds (5 seconds + 3 second fade)
+            return shape.size <= shape.maxSize && age <= 8000;
+          }
           return shape.size <= shape.maxSize;
         });
         
@@ -304,14 +315,21 @@ export const TunnelEffect: React.FC<TunnelEffectProps> = ({ sliders, shapeType, 
           if (shape.isText && shape.text) {
             const age = p.millis() - shape.spawnTime;
             if (age > 5000) {
-              alpha = Math.max(0, 255 - ((age - 5000) / 1000) * 255); // Fade over 1 second after 5 seconds
+              alpha = Math.max(0, 255 - ((age - 5000) / 3000) * 255); // Fade over 3 seconds after 5 seconds
             }
           }
           
-          // Smooth color interpolation
-          const color = interpolateColor(shape.colorOffset, colorPaletteRef.current, shape.spawnTime, drawSliders.colorCycling);
+          // Smooth color interpolation (static for text if checkbox is checked)
+          let color;
+          if (shape.isText && shape.text && staticTextColorRef.current) {
+            // Use the dedicated text color for static text
+            color = p.color(textColorRef.current);
+          } else {
+            color = interpolateColor(shape.colorOffset, colorPaletteRef.current, shape.spawnTime, drawSliders.colorCycling);
+          }
           p.stroke(p.red(color), p.green(color), p.blue(color), alpha);
           p.strokeWeight(drawSliders.strokeWidth);
+          
           p.noFill();
           
           p.push();

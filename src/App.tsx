@@ -2,21 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { TunnelEffect } from './TunnelEffect';
 import { SliderControls } from './SliderControls';
 import { ShapeSelector } from './ShapeSelector';
-import './index.css';
 
 // Default slider values
 const defaultSliders = {
-  rotationSpeed: 0.20,
+  rotationSpeed: 0,
   animationSpeed: 2,
   strokeWidth: 2,
   originX: 50,
   originY: 50,
-  spawnRate: 2,
-  originXAutomation: 0.5,
+  spawnRate: 5,
+  originXAutomation: 0,
   originYAutomation: 0,
-  color: 120,
-  colorCycling: 2,
-  autoRotation: 0
+  colorCycling: 0,
+  backgroundCycling: 0,
+
+  autoRotation: 0,
+  textSpawnRate: 0.1
 };
 
 // Static values
@@ -27,7 +28,13 @@ const staticConfig = {
 
 export function App() {
   const [sliders, setSliders] = useState(defaultSliders);
-  const [shapeType, setShapeType] = useState<'triangle' | 'square' | 'circle' | 'hexagon'>('circle');
+  const [shapeType, setShapeType] = useState<'triangle' | 'square' | 'circle'>('square');
+  const [customText, setCustomText] = useState('');
+  const [mouseFollow, setMouseFollow] = useState(false);
+  const [mouseRotationControl, setMouseRotationControl] = useState(false);
+  const [invertTextRotation, setInvertTextRotation] = useState(false);
+  const [colorPalette, setColorPalette] = useState(['#00ff00', '#ff00ff', '#00ffff', '#ffff00']);
+  const [backgroundPalette, setBackgroundPalette] = useState(['#000055', '#1a0033', '#330011', '#002211']);
 
   return (
     <div className="min-h-screen bg-black text-green-500 terminal-pixel overflow-hidden">
@@ -47,15 +54,29 @@ export function App() {
       <div className="flex" style={{ height: 'calc(100vh - 120px)' }}>
         {/* Left Panel - Controls */}
         <div className="w-80 flex flex-col h-full">
-          <ShapeSelector shapeType={shapeType} setShapeType={setShapeType} />
+          <ShapeSelector 
+            shapeType={shapeType} 
+            setShapeType={setShapeType} 
+            customText={customText}
+            setCustomText={setCustomText}
+          />
           <div className="flex-1 mt-4 overflow-hidden">
-            <SliderControls sliders={sliders} setSliders={setSliders} />
+            <SliderControls sliders={sliders} setSliders={setSliders} mouseFollow={mouseFollow} setMouseFollow={setMouseFollow} mouseRotationControl={mouseRotationControl} setMouseRotationControl={setMouseRotationControl} invertTextRotation={invertTextRotation} setInvertTextRotation={setInvertTextRotation} colorPalette={colorPalette} setColorPalette={setColorPalette} backgroundPalette={backgroundPalette} setBackgroundPalette={setBackgroundPalette} />
           </div>
         </div>
 
         {/* Right Panel - Canvas */}
         <div className="flex-1 relative bg-black border-l-2 border-green-500 min-h-0">
-          <TunnelEffect sliders={sliders} shapeType={shapeType} />
+          <TunnelEffect 
+            sliders={sliders} 
+            shapeType={shapeType} 
+            customText={customText}
+            mouseFollow={mouseFollow}
+            mouseRotationControl={mouseRotationControl}
+            invertTextRotation={invertTextRotation}
+            colorPalette={colorPalette}
+            backgroundPalette={backgroundPalette}
+          />
         </div>
       </div>
 

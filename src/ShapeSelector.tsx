@@ -3,9 +3,11 @@ import React from 'react';
 interface ShapeSelectorProps {
   shapeType: 'triangle' | 'square' | 'circle';
   setShapeType: React.Dispatch<React.SetStateAction<'triangle' | 'square' | 'circle'>>;
+  customText: string;
+  setCustomText: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export const ShapeSelector: React.FC<ShapeSelectorProps> = ({ shapeType, setShapeType }) => {
+export const ShapeSelector: React.FC<ShapeSelectorProps> = ({ shapeType, setShapeType, customText, setCustomText }) => {
   const shapes = [
     { type: 'triangle', symbol: '▲', label: 'TRIANGLE' },
     { type: 'square', symbol: '■', label: 'SQUARE' },
@@ -13,7 +15,7 @@ export const ShapeSelector: React.FC<ShapeSelectorProps> = ({ shapeType, setShap
   ];
 
   return (
-    <div className="bg-black border-2 border-green-500 p-4 font-mono text-sm">
+    <div className="bg-black border-2 border-green-500 p-4 font-mono text-sm terminal-pixel">
       <h3 className="text-green-500 text-lg font-bold mb-4 text-center">
         [ SHAPE.SELECTOR ]
       </h3>
@@ -36,6 +38,22 @@ export const ShapeSelector: React.FC<ShapeSelectorProps> = ({ shapeType, setShap
             </div>
           </button>
         ))}
+      </div>
+      
+      {/* Custom Text Input */}
+      <div className="mt-4 p-3 border border-green-600 bg-gray-800">
+        <div className="text-green-400 text-xs mb-2">CUSTOM TEXT SPAWNER</div>
+        <input
+          type="text"
+          value={customText}
+          onChange={(e) => setCustomText(e.target.value.slice(0, 16))}
+          placeholder="Enter text (16 chars max)"
+          maxLength={16}
+          className="w-full px-2 py-1 bg-gray-900 border border-green-700 text-green-400 text-xs font-mono focus:outline-none focus:border-green-500"
+        />
+        <div className="text-green-600 text-xs mt-1">
+          [{customText.length}/16] - Adjustable spawn rate
+        </div>
       </div>
       
       <div className="mt-4 p-2 border border-green-900 bg-gray-900">
